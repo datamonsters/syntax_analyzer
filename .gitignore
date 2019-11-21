@@ -1,0 +1,44 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache
+*.pyc
+
+# IDE
+.idea
+.vscode
+*.code-workspace
+.ipynb_checkpoints
+
+# Configuration
+/yoyo.ini
+/.env
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+
+# Unit test / coverage reports
+.coverage
+nosetests.xml
+coverage.xml
+
+# Translations
+*.mo
+*.pot
