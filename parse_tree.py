@@ -255,22 +255,43 @@ class Tree:
 		else:
 			return True;
 
-	def _display(self, node, space):
+	def _display(self, node, space, show_printing):
+		result = [[]]
 		if (node):
 			if (node.tag == "S"):
-				print(node.tag);
+				if show_printing:
+					print(node.tag)
+				#result += node.tag+'\n'
+				result[-1].append(node.tag)
+				result.append([])
 			if (node.tag != "S" and not node.leaf):
-				print(" "*space + node.tag);
+				if show_printing:
+					print(" "*space + node.tag)
+				#result += " "*space + node.tag+'\n'
+				result[-1].append(" "*space)
+				result[-1].append(node.tag)
+				result.append([])
 			if (node.leaf):
-				print(' '*space*2, node.tag, '\n', ' '*3*space, node.word, node.grammemes_simple);
+				if show_printing:
+					print(' '*space*2, node.tag, '\n', ' '*3*space, node.word, node.grammemes_simple)
+				#result += ' '*space*2 + ' ' + node.tag + ' ' + '\n' + ' ' + ' '*3*space + ' ' + node.word + ' ' + str(node.grammemes_simple)+'\n'
+				result[-1].append(' '*space*2 + ' ')
+				result[-1].append(node.tag)
+				result.append([])
+				result[-1].append(' '*3*space + ' ')
+				result[-1].append(node.word)
+				result[-1].append(node.grammemes_simple)
 			
-			self._display(node.l, space+2)
-			self._display(node.r, space+2)
+			result.extend(self._display(node.l, space+2, show_printing=show_printing))
+			result.extend(self._display(node.r, space+2, show_printing=show_printing))
+		return result
 
 	# preorder traversal
-	def display(self):
+	def display(self, show_printing=False):
+		result = [[]]
 		for s in self.root.sentences:
-			self._display(s,1);
+			result.extend(self._display(s, 1, show_printing=show_printing));
+		return result
 
 	def get_sentence(self, node, sent):
 		if node:	

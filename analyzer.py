@@ -4,8 +4,10 @@ import sys
 import pymorphy2
 import shelve
 import itertools
-import parse_tree
-from parse_tree import Tree,Root,Node
+#import parse_tree
+from syntax_analyzer.parse_tree import Tree,Root,Node
+import time
+import re
 
 class Parser:
 	def __init__(self):
@@ -114,7 +116,7 @@ class Parser:
 	
 	def create_parse_tree(self, sent):
 		tree = Tree(self.grammar);
-		tree.build(sent);	
+		tree.build(sent);
 		tree.reduce();
 		if (tree.create_root([tree])==False):
 			return False;
@@ -127,19 +129,19 @@ class Parser:
 		temp = sent.copy();
 		subtrees = list();
 		for i, word in enumerate(temp):
-			
+		
 			# if conj - try to use it as delimiter of clauses
 			if (temp[i][1] == "CONJ"):
 				if(self.create_parse_tree(temp[:i]) is not False):
 					subtrees.append(self.create_parse_tree(temp[:i]));
 					del temp[:i+1]
-			
+		
 			# if nominative - try to use it as delimiter of clauses
 			if (i<len(temp) and temp[i][1] == "NP[case='nomn']"):
 				if(self.create_parse_tree(temp[:i]) is not False and self.create_parse_tree(temp[i:]) is not False):
 					subtrees.append(self.create_parse_tree(temp[:i]));
 					del temp[:i]
-		
+	
 		if(self.create_parse_tree(temp) == False):
 			return False;
 		else:
@@ -148,16 +150,22 @@ class Parser:
 			tree.create_root(subtrees);
 			return tree;
 
-
+            
 	def build_trees(self, sent):
 		variants = list();
 		trees = list();
-		for var in itertools.product(*sent):
-			variants.append(var)
-		for var in variants:
-			trees.append(self.split_sentence(list(var)))
-		trees = [ tree for tree in trees if tree is not False ]
-		return trees[:5];
+		for i, var in enumerate(itertools.product(*sent)):
+			if i<1000:
+				variants.append(var)
+			else:
+				break
+		i = 0
+		while len(trees)<5 and i<100:
+			tree = self.split_sentence(list(variants[i]))
+			if tree is not False:
+				trees.append(tree)
+			i+=1
+		return trees#[:5];
 
 
 
@@ -168,7 +176,6 @@ class Parser:
 			for grammemes in word[1]:
 				variants.append([word[0], self.find_lhs(grammemes),grammemes])
 			result.append(variants[:5]);
-
 		trees = self.build_trees(result);
 
 		return trees;
@@ -217,7 +224,6 @@ class Parser:
 				result.append([word[6:],self.tag(word)])
 			else:
 				result.append([word,self.tag(word)])
-		
 		return self._parse(result);
 
 
@@ -231,6 +237,7 @@ def create_rules(lhs, rhs):
 
 def grammar(file):
 	data = file.read().split('\n')
+	data = list(filter(lambda x: len(x)>0, data))
 	result = dict()
 	for line in data:
 		rule = line.split('->')
@@ -241,6 +248,11 @@ def grammar(file):
 		result.update(rules)
 	return result
 
+PATH = os.path.dirname(os.path.abspath(__file__))
+PATH = re.sub('[\\\/]', '/', PATH)
+                    
+d=shelve.open(PATH+'/dict/d');
+G=grammar(open(PATH+'/grammar.txt'));
 
-d=shelve.open(sys.prefix + str("\\Analyzer\\dict\\d"));
-G=grammar(open(sys.prefix + str("\\Analyzer\\grammar.txt")));
+#d=shelve.open(sys.prefix + str("\\syntax_analyzer\\dict\\d"));
+#G=grammar(open(sys.prefix + str("\\syntax_analyzer\\grammar.txt")));
