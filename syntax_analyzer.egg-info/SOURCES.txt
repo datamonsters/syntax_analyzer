@@ -1,0 +1,9 @@
+README.md
+setup.py
+syntax_analyzer/__init__.py
+syntax_analyzer/analyzer.py
+syntax_analyzer/parse_tree.py
+syntax_analyzer.egg-info/PKG-INFO
+syntax_analyzer.egg-info/SOURCES.txt
+syntax_analyzer.egg-info/dependency_links.txt
+syntax_analyzer.egg-info/top_level.txt

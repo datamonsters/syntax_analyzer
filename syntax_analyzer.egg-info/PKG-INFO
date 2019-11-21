@@ -1,0 +1,11 @@
+Metadata-Version: 1.2
+Name: syntax-analyzer
+Version: 0.1
+Summary: Syntax Analyzer
+Home-page: https://github.com/datamonsters/syntax_analyzer
+Author: Data Monsters
+Author-email: support@datamonsters.co
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Requires-Python: >=3.6
